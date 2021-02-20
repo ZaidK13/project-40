@@ -1,102 +1,99 @@
-class Game {
-  constructor(){
+class Game{
+    constructor(){
 
-  }
+    }
+    getState() {
+        var gameStateRef = database.ref('gameState');
+        gameStateRef.on("value", function (data) {
+            gameState = data.val();
+        })
 
-  getState(){
-    var gameStateRef  = database.ref('gameState');
-    gameStateRef.on("value",function(data){
-       gameState = data.val();
-    })
-
-  }
-
-  update(state){
-    database.ref('/').update({
-      gameState: state
-    });
-  }
-
-  async start(){
-    if(gameState === 0){
-      player = new Player();
-      var playerCountRef = await database.ref('playerCount').once("value");
-      if(playerCountRef.exists()){
-        playerCount = playerCountRef.val();
-        player.getCount();
-      }
-      form = new Form()
-      form.display();
     }
 
-    car1 = createSprite(100,200);
-    car1.addImage("car1",car1_img);
-    car2 = createSprite(300,200);
-    car2.addImage("car2",car2_img);
-    car3 = createSprite(500,200);
-    car3.addImage("car3",car3_img);
-    car4 = createSprite(700,200);
-    car4.addImage("car4",car4_img);
-    cars = [car1, car2, car3, car4];
-  }
-
-  play(){
-    form.hide();
+    update(state) {
+        database.ref('/').update({
+            gameState: state
+        });
+    }
+    async start() {
+            if (gameState === 0) {
+                player = new Player();
+                var playerCountRef = await database.ref('playerCount').once("value");
+                if (playerCountRef.exists()) {
+                    playerCount = playerCountRef.val();
+                    player.getCount();
+                }
+                form = new Form()
+                form.display();
+            }
+    player1 = createSprite(200,500);
+    player1.addImage("player1",player_img);
     
-    Player.getPlayerInfo();
-    
-    if(allPlayers !== undefined){
-      background(rgb(198,135,103));
-      image(track, 0,-displayHeight*4,displayWidth, displayHeight*5);
-      
-      //var display_position = 100;
-      
-      //index of the array
-      var index = 0;
+    player2 = createSprite(800,500);
+    player2.addImage("player2", player_img);
+    players=[player1,player2];
 
-      //x and y position of the cars
-      var x = 175 ;
-      var y;
-
-      for(var plr in allPlayers){
-        //add 1 to the index for every loop
-        index = index + 1 ;
-
-        //position the cars a little away from each other in x direction
-        x = x + 200;
-        //use data form the database to display the cars in y direction
-        y = displayHeight - allPlayers[plr].distance;
-        cars[index-1].x = x;
-        cars[index-1].y = y;
-
-        if (index === player.index){
-          stroke(10);
-          fill("blue");
-          ellipse(x,y,60,60)
-          cars[index - 1].shapeColor = "red";
-          camera.position.x = displayWidth/2;
-          camera.position.y = cars[index-1].y;
         }
-       
-        //textSize(15);
-        //text(allPlayers[plr].name + ": " + allPlayers[plr].distance, 120,display_position)
-      }
+    
+    play(){
+        
+        form.hide();
 
-    }
+        Player.getPlayerInfo();
+        image(back_img, 0, 0, 1000, 800);
+        var x =100;
+        var y=200;
+        var index =0;
+        drawSprites();
 
-    if(keyIsDown(UP_ARROW) && player.index !== null){
-      player.distance +=10
-      player.update();
-    }
+        for(var plr in allPlayers){
+        
+            index = index+1;
+            x = 500-allPlayers[plr].distance;
+            y=500;
+            
+            players[index -1].x = x;
+            players[index - 1].y = y;
 
-    if(player.distance > 3860){
-      gameState = 2;
-    }
-   
-    drawSprites();
-  }
+            // Differentiate the main player by printing
+            // the name of the player on the basket. 
 
-  end(){
-    console.log("Game Ended");
-  }
+        }
+
+
+        // Give movements for the players using arrow keys
+if(keyIsDown(LEFT_ARROW) && player.index !== null){
+    player.distance += -10
+    player.update();
 }
+if(keyIsDown(RIGHT_ARROW) && player.index !== null){
+player.distance += 10
+player.update();
+}
+
+if(frameCount%20 === 0 ){
+    fruit = createSprite(random(100,1000),0,100,100)
+    fruit.velocityY = 5;
+    
+    var rand= Math.round(random(1,5))
+    switch(rand){
+        case 1: fruit.addImage(fruit1_img);
+        break
+        case 2: fruit.addImage(fruit2_img);
+        break
+        case 3: fruit.addImage(fruit3_img);
+        break
+        case 4: fruit.addImage(fruit4_img);
+        break
+        case 5: fruit.addImage(fruit5_img);
+        break
+    }
+        // Create and spawn fruits randomly
+
+        
+    }
+    }
+    end(){
+       console.log("Game Ended");
+    }
+    }
